@@ -15,9 +15,9 @@ validateEnv();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(cors(corsOption));
 app.use(express.json());
-app.use(cookieParser());
 
 app.use('/health', healthRoute);
 app.use('/api', userRoute);
