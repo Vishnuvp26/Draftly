@@ -1,4 +1,5 @@
 import ProtectedRoutes from "@/components/protected/ProtectedRoute";
+import EditBlog from "@/components/user/blog/EditBlog";
 import CreateBlogForm from "@/components/user/blog/Form";
 import DetailPage from "@/pages/user/DetailPage";
 import HomePage from "@/pages/user/HomePage";
@@ -37,6 +38,14 @@ const BlogRoutes = () => {
                 element={
                     <ProtectedRoutes>
                         <DetailPage />
+                    </ProtectedRoutes>
+                }
+            />
+            <Route
+                path="blog/edit-blog/:id"
+                element={
+                    <ProtectedRoutes>
+                        <EditBlog />
                     </ProtectedRoutes>
                 }
             />

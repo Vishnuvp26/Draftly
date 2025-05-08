@@ -1,15 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, } from "@/components/ui/pagination";
-import { Pencil, Search, X } from "lucide-react";
+import { BookOpen, Pencil, Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getMyBlogs } from "@/api/blog/blogApi";
+import { getMyBlogs, deleteBlog } from "@/api/blog/blogApi";
 import type { BlogType } from "@/types/types";
 import BlogSkeleton from "@/components/ui/BlogSkeleton";
 import type { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical, Trash } from "lucide-react";
+import { toast } from "sonner";
+import ConfirmDialog from "./Alert";
+import PaginationControls from "./Pagination";
 
 const Blogs = () => {
     const user = useSelector((state: RootState) => state.user);
@@ -19,6 +23,7 @@ const Blogs = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
+    const [blogToDelete, setBlogToDelete] = useState<string | null>(null);
 
     const fetchBlogs = async (page: number, searchTerm: string) => {
         try {
@@ -32,6 +37,19 @@ const Blogs = () => {
             console.error("Failed to fetch blogs:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async (blogId: string) => {
+        try {
+            if (!user?._id) return;
+            await deleteBlog(blogId, user._id);
+            toast.success("Blog deleted successfully");
+            fetchBlogs(currentPage, search);
+            setBlogToDelete(null);
+        } catch (error) {
+            console.error("Failed to delete blog:", error);
+            toast.error("Failed to delete blog");
         }
     };
 
@@ -82,9 +100,53 @@ const Blogs = () => {
                         {blogs.map((blog) => (
                             <Card
                                 key={blog._id}
-                                onClick={() => navigate(`/auth/blog/${blog._id}`)}
-                                className="bg-gray-200 dark:bg-neutral-900"
+                                className="bg-gray-200 dark:bg-neutral-900 relative"
                             >
+                                <div className="absolute top-2 right-2">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="h-8 w-8 p-0 hover:bg-gray-300 dark:hover:bg-gray-700"
+                                            >
+                                                <MoreVertical className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/auth/blog/${blog._id}`);
+                                                }}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <BookOpen className="h-4 w-4" />
+                                                <span>View</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/auth/blog/edit-blog/${blog._id}`);
+                                                }}
+                                                className="flex items-center gap-2"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                                <span>Edit</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setBlogToDelete(blog._id);
+                                                }}
+                                                className="flex items-center gap-2 text-red-600 focus:text-red-600"
+                                            >
+                                                <Trash className="h-4 w-4" />
+                                                <span>Delete</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
                                 <CardContent className="w-full">
                                     <div>
                                         <img
@@ -120,45 +182,24 @@ const Blogs = () => {
                         </p>
                     </div>
                 )}
-
                 {totalPages > 1 && (
                     <div className="mt-6 mb-5">
-                        <Pagination className="mt-6">
-                            <PaginationContent className="flex justify-between">
-                                <PaginationItem>
-                                    <PaginationPrevious
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (currentPage > 1) {
-                                                setCurrentPage(prev => prev - 1);
-                                            }
-                                        }}
-                                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                                    />
-                                </PaginationItem>
-
-                                <PaginationItem className="mx-3">
-                                    <PaginationLink className="px-3">
-                                        Page {currentPage} of {totalPages}
-                                    </PaginationLink>
-                                </PaginationItem>
-
-                                <PaginationItem>
-                                    <PaginationNext
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (currentPage < totalPages) {
-                                                setCurrentPage(prev => prev + 1);
-                                            }
-                                        }}
-                                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                                    />
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
+                        <PaginationControls
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            setCurrentPage={setCurrentPage}
+                        />
                     </div>
                 )}
             </div>
+            <ConfirmDialog
+                open={!!blogToDelete}
+                onCancel={() => setBlogToDelete(null)}
+                onConfirm={() => blogToDelete && handleDelete(blogToDelete)}
+                title="Are you absolutely sure?"
+                description="This will permanently delete your blog post."
+                confirmLabel="Delete"
+            />
         </div>
     );
 };

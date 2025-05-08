@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {Pagination,PaginationContent,PaginationItem,PaginationLink,PaginationNext,PaginationPrevious,} from "@/components/ui/pagination";
 import { Pencil, Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -8,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBlogs } from "@/api/blog/blogApi";
 import type { BlogType } from "@/types/types";
 import BlogSkeleton from "@/components/ui/BlogSkeleton";
+import PaginationControls from "../blog/Pagination";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -121,39 +121,11 @@ const Home = () => {
 
                 {totalPages > 1 && (
                     <div className="mt-6 mb-5">
-                        <Pagination className="mt-6">
-                            <PaginationContent className="flex justify-between">
-                                <PaginationItem>
-                                    <PaginationPrevious
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (currentPage > 1) {
-                                                setCurrentPage(prev => prev - 1);
-                                            }
-                                        }}
-                                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                                    />
-                                </PaginationItem>
-
-                                <PaginationItem className="mx-3">
-                                    <PaginationLink className="px-3">
-                                        Page {currentPage} of {totalPages}
-                                    </PaginationLink>
-                                </PaginationItem>
-
-                                <PaginationItem>
-                                    <PaginationNext
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (currentPage < totalPages) {
-                                                setCurrentPage(prev => prev + 1);
-                                            }
-                                        }}
-                                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
-                                    />
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
+                        <PaginationControls
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            setCurrentPage={setCurrentPage}
+                        />
                     </div>
                 )}
             </div>

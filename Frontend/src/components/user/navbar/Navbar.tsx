@@ -1,9 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeContext } from "@/context/ThemeContext";
 import { Moon, Sun, Menu, ChevronDown, LogOut } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -17,12 +17,17 @@ const Navbar = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const user = useSelector((state: RootState) => state.user);
     const token = user.accessToken;
     const name = user.name;
 
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location]);
 
     return (
         <nav className="fixed z-50 top-0.5 left-0 md:top-6 right-0">
@@ -123,7 +128,6 @@ const Navbar = () => {
                                         <Button onClick={() => navigate('/sign-up')} variant="ghost" className="justify-start text-base">Signup</Button>
                                     </>
                                 }
-                                
                                 <Button variant="ghost" className="justify-start text-base" onClick={toggleTheme}>
                                     {theme === "light" ? (
                                         <>
