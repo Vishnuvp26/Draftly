@@ -1,4 +1,4 @@
-import { CorsOptions } from "vite";
+import { CorsOptions } from "cors";
 import { env } from "./env.config";
 
 const corsOption: CorsOptions = {
