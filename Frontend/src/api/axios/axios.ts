@@ -1,7 +1,6 @@
 import { removeUser, setAccessToken } from '@/redux/authSlice';
 import store, { persistor } from '@/redux/store';
 import axios from 'axios'
-import Cookies from 'js-cookie';
 import { refreshToken } from '../auth/Login';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -24,7 +23,7 @@ export const axiosInstance = axios.create({
 
 Axios.interceptors.request.use(
     (config) => {
-        const token = Cookies.get("accessToken");
+        const token = store.getState().user.accessToken;
         if (token) {
             config.headers["authorization"] = `Bearer ${token}`
         }
