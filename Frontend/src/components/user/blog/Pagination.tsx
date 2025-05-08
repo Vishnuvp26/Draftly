@@ -10,6 +10,14 @@ import type { PaginationControlsProps } from "@/types/types";
 
 const PaginationControls = ({ currentPage, totalPages, setCurrentPage }: PaginationControlsProps) => {
     if (totalPages <= 1) return null;
+
+    const handlePageChange = (newPage: number) => {
+        setCurrentPage(newPage);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
   
     return (
         <div className="mt-6 mb-5">
@@ -19,7 +27,7 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }: Paginat
                         <PaginationPrevious
                             onClick={(e) => {
                                 e.preventDefault();
-                                if (currentPage > 1) setCurrentPage(currentPage - 1);
+                                if (currentPage > 1) handlePageChange(currentPage - 1);
                             }}
                             className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                         />
@@ -35,7 +43,7 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }: Paginat
                         <PaginationNext
                             onClick={(e) => {
                                 e.preventDefault();
-                                if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                                if (currentPage < totalPages) handlePageChange(currentPage + 1);
                             }}
                             className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                         />
@@ -46,4 +54,4 @@ const PaginationControls = ({ currentPage, totalPages, setCurrentPage }: Paginat
     );
 };
   
-export default PaginationControls;  
+export default PaginationControls;

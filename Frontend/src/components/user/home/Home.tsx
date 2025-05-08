@@ -44,7 +44,8 @@ const Home = () => {
     return (
         <div className="mt-20 sm:mt-32 px-4">
             <div className="max-w-4xl mx-auto">
-                <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center justify-between gap-3 mb-6">
+
                     <div className="relative w-64">
                         <Input
                             type="text"
