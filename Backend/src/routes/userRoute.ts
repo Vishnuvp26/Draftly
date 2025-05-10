@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { validateRegister } from "../middleware/validation";
-import { login, refreshToken, register } from "../controller/userController";
+import { login, register } from "../controller/userController";
+import { refreshToken } from "../controller/authController";
 
 const router = Router();
 

@@ -60,7 +60,7 @@ export const getAllBlogs = async (req: Request, res: Response, next: NextFunctio
             Blog.countDocuments(query),
         ]);
 
-        res.status(200).json({
+        res.status(HttpStatus.OK).json({
             blogs,
             totalPages: Math.ceil(total / limit),
             currentPage: Number(page),
@@ -95,7 +95,7 @@ export const getBlogsByUserId = async (req: Request, res: Response, next: NextFu
             Blog.countDocuments(query),
         ]);
 
-        res.status(200).json({
+        res.status(HttpStatus.OK).json({
             blogs,
             totalPages: Math.ceil(total / limit),
             currentPage: Number(page),
@@ -140,7 +140,6 @@ export const updateBlog = async (req: Request, res: Response, next: NextFunction
             return;
         }
 
-        // Check if user is the author
         if (blog.author.toString() !== req.params.userId) {
             res.status(HttpStatus.FORBIDDEN).json({ message: Messages.NOT_AUTHORIZED });
             return;
@@ -178,7 +177,6 @@ export const deleteBlog = async (req: Request, res: Response, next: NextFunction
             return;
         }
 
-        // Check if user is the author
         if (blog.author.toString() !== req.params.userId) {
             res.status(HttpStatus.FORBIDDEN).json({ message: Messages.NOT_AUTHORIZED });
             return;

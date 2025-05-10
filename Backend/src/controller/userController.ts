@@ -3,7 +3,7 @@ import User from "../model/userModel";
 import { HttpStatus } from "../constants/statusConstant";
 import { Messages } from "../constants/MessageConstants";
 import { comparePassword, hashPassword } from "../utils/password";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "../utils/jwt";
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -62,27 +62,6 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             user: user,
             accessToken,
         });
-    } catch (error) {
-        next(error)
-    }
-};
-
-export const refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    console.log('Refresh token controller inside...!!');
-    try {
-        const refreshToken = req.cookies.refreshToken;
-        console.log('Refresh token from body:::', refreshToken);
-
-        const decoded = verifyRefreshToken(refreshToken);
-        if (!decoded) {
-            res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.TOKEN_REQUIRED });
-            return
-        }
-
-        const accessToken = generateAccessToken(decoded.id)
-        console.log('New accessToken generated:::', accessToken);
-
-        res.status(HttpStatus.OK).json({ accessToken })
     } catch (error) {
         next(error)
     }
