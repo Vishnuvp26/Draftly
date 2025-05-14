@@ -42,8 +42,7 @@ const Blogs = () => {
 
     const handleDelete = async (blogId: string) => {
         try {
-            if (!user?._id) return;
-            await deleteBlog(blogId, user._id);
+            await deleteBlog(blogId);
             toast.success("Blog deleted successfully");
             fetchBlogs(currentPage, search);
             setBlogToDelete(null);
@@ -51,7 +50,7 @@ const Blogs = () => {
             console.error("Failed to delete blog:", error);
             toast.error("Failed to delete blog");
         }
-    };
+    };    
 
     useEffect(() => {
         fetchBlogs(currentPage, search);

@@ -69,8 +69,10 @@ const CreateBlogForm = () => {
                 },
             })
         } catch (err: any) {
-            console.error("Error posting blog:", err);
-            alert(err.message || "Failed to post blog.");
+            console.error("Error posting blog:", err.message);
+            toast("Error", {
+                description: err.message || "Failed to post blog",
+            });
         } finally {
             setLoading(false);
         }

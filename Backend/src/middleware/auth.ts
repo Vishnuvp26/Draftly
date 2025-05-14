@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { env } from "../config/env.config";
 import User from "../model/userModel";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
     user?: {
         id: string;
     };

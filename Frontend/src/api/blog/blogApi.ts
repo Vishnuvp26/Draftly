@@ -16,7 +16,7 @@ export const createBlog = async ({ title, content, image, userId }: CreateBlogPa
 
         return response.data;
     } catch (error: any) {
-        throw error.response?.data || "Failed to create blog";
+        throw new Error('Only image files are allowed');
     }
 };
 
@@ -72,9 +72,9 @@ export const updateBlog = async ({ id, title, content, image, userId }: UpdateBl
     }
 };
 
-export const deleteBlog = async (id: string, userId: string) => {
+export const deleteBlog = async (id: string) => {
     try {
-        const response = await Axios.delete(`/api/blog/${id}/user/${userId}`);
+        const response = await Axios.delete(`/api/blog/${id}`);
         return response.data;
     } catch (error: any) {
         throw error.response?.data || "Failed to delete blog";

@@ -38,7 +38,7 @@ router.put(
 );
 
 router.delete(
-    "/blog/:id/user/:userId",
+    "/blog/:id",
     authenticateToken,
     deleteBlog
 );

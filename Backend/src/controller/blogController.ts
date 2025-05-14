@@ -2,11 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../constants/statusConstant";
 import { Messages } from "../constants/MessageConstants";
 import Blog from "../model/blogModel";
+import { AuthRequest } from "../middleware/auth";
 
-export const createBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const createBlog = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { title, content} = req.body;
-        const { userId } = req.params;
+        const userId = req.user?.id;
 
         if (!title || !content) {
             res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.ALL_FEILDs_REQUIRED });
@@ -71,9 +72,9 @@ export const getAllBlogs = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
-export const getBlogsByUserId = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getBlogsByUserId = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { userId } = req.params;
+        const userId = req.user?.id;
         const { page = 1, search = "" } = req.query;
 
         const limit = 3;
@@ -166,18 +167,18 @@ export const updateBlog = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export const deleteBlog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteBlog = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
+        const userId = req.user?.id;
 
         const blog = await Blog.findById(id);
-
         if (!blog) {
             res.status(HttpStatus.NOT_FOUND).json({ message: Messages.BLOG_NOT_FOUND });
             return;
         }
 
-        if (blog.author.toString() !== req.params.userId) {
+        if (blog.author.toString() !== userId) {
             res.status(HttpStatus.FORBIDDEN).json({ message: Messages.NOT_AUTHORIZED });
             return;
         }
@@ -185,7 +186,7 @@ export const deleteBlog = async (req: Request, res: Response, next: NextFunction
         await Blog.findByIdAndDelete(id);
 
         res.status(HttpStatus.OK).json({
-            message: Messages.BLOG_DELETED
+            message: Messages.BLOG_DELETED,
         });
     } catch (error) {
         next(error);

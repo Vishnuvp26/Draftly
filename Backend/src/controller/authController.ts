@@ -6,8 +6,7 @@ import { Messages } from "../constants/MessageConstants";
 export const refreshToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        console.log('Refresh token from body:::', refreshToken);
-
+        
         const decoded = verifyRefreshToken(refreshToken);
         if (!decoded) {
             res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.TOKEN_REQUIRED });

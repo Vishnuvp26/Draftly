@@ -48,13 +48,27 @@ const Signup = () => {
                 password: formData.password,
                 confirmPassword: formData.confirmPassword
             });
+
+            setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+            });
+            setError({});
+
             toast(response.message, {
                 description: "Your account has been created, please login",
                 action: {
                     label: "Ok",
                     onClick: () => navigate('/login'),
                 },
-            })
+            });
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+
         } catch (error: any) {
             setError({ general: error.message || "Something went wrong, please try again" });
         } finally {
