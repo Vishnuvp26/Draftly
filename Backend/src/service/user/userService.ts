@@ -22,42 +22,30 @@ export class UserService implements IUserService {
         return { message: Messages.SIGNUP_SUCCESS };
     };
 
-    async login(
-    email: string,
-    password: string
-): Promise<{ message: string; user: any; accessToken: string; refreshToken: string }> {
-    console.log("🚀 [Service] login called");
-    console.log("📧 Login attempt for email:", email);
+    async login(email: string, password: string): Promise<{ message: string; user: any; accessToken: string; refreshToken: string }> {
+        
+        const user = await this._baseRepo.findOne({ email });
 
-    const user = await this._baseRepo.findOne({ email });
+        if (!user) {
+            throw createHttpError(HttpStatus.BAD_REQUEST, Messages.USER_NOT_FOUND);
+        }
 
-    if (!user) {
-        console.log("❌ No user found with email:", email);
-        throw createHttpError(HttpStatus.BAD_REQUEST, Messages.USER_NOT_FOUND);
-    }
+        const validPassword = await comparePassword(password, user.password);
 
-    console.log("🔐 User found:", { id: user.id, email: user.email });
+        if (!validPassword) {
+            throw createHttpError(HttpStatus.BAD_REQUEST, Messages.INVALID_CREDENTIALS);
+        }
 
-    const validPassword = await comparePassword(password, user.password);
+        const accessToken = generateAccessToken(user.id.toString());
+        const refreshToken = generateRefreshToken(user.id.toString());
 
-    if (!validPassword) {
-        console.log("❌ Invalid password for user:", email);
-        throw createHttpError(HttpStatus.BAD_REQUEST, Messages.INVALID_CREDENTIALS);
-    }
-
-    const accessToken = generateAccessToken(user.id.toString());
-    const refreshToken = generateRefreshToken(user.id.toString());
-
-    console.log("✅ Login successful. Access and refresh tokens generated.");
-
-    return {
-        message: Messages.LOGIN_SUCCESS,
-        user,
-        accessToken,
-        refreshToken
+        return {
+            message: Messages.LOGIN_SUCCESS,
+            user,
+            accessToken,
+            refreshToken
+        };
     };
-}
-
 
     async refreshAccessToken(token: string): Promise<string> {
         const decoded = verifyRefreshToken(token);
