@@ -67,7 +67,10 @@ const CreateBlogForm = () => {
                     label: "Ok",
                     onClick: () => navigate('/auth/home'),
                 },
-            })
+            });
+            setTimeout(() => {
+                navigate("/auth/home");
+            }, 1000);
         } catch (err: any) {
             toast("Error", {
                 description: err.message || "Failed to post blog",

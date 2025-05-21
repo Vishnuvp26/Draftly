@@ -14,7 +14,7 @@ const BlogSchema: Schema = new Schema<IBlog>(
             required: true
         },
         content: {
-            type: String,
+            type: String,   
             required: true
         },
         imageUrl: {

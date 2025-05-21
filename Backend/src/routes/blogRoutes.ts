@@ -1,46 +1,53 @@
 import { Router } from "express";
-import { createBlog, deleteBlog, getAllBlogs, getBlogById, getBlogsByUserId, updateBlog } from "../controller/blogController";
 import upload from "../config/multer.config";
 import { authenticateToken } from "../middleware/auth";
 
+import { BlogController } from "../controller/blog/blogController";
+import { BlogRepository } from "../repository/blog/blogRepository";
+import { BlogService } from "../service/blog/blogService";
+
 const router = Router();
+
+const blogRepository = new BlogRepository();
+const blogService = new BlogService(blogRepository);
+const blogController = new BlogController(blogService)
 
 router.post(
     "/create-blog/:userId",
     authenticateToken,
     upload.single('image'),
-    createBlog
+    blogController.createBlog.bind(blogController)
 );
 
 router.get(
     "/blogs",
     authenticateToken,
-    getAllBlogs
+    blogController.getAllBlogs.bind(blogController)
 );
 
 router.get(
     "/blogs/user/:userId",
     authenticateToken,
-    getBlogsByUserId
+    blogController.getBlogsByUserId.bind(blogController)
 );
 
 router.get(
     "/blog/:id",
     authenticateToken,
-    getBlogById
+    blogController.getBlogById.bind(blogController)
 );
 
 router.put(
     "/blog/:id/user/:userId",
     authenticateToken,
     upload.single("image"),
-    updateBlog
+    blogController.updateBlog.bind(blogController)
 );
 
 router.delete(
     "/blog/:id",
     authenticateToken,
-    deleteBlog
+    blogController.deleteBlog.bind(blogController)
 );
 
 export default router;

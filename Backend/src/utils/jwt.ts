@@ -13,6 +13,7 @@ export function verifyToken(token: string) {
     try {
         return jwt.verify(token, env.JWT_SECRET) as {id: string}
     } catch (error) {
+        console.log(error)
         return null
     }
 };
@@ -21,6 +22,7 @@ export function verifyRefreshToken(token: string) {
     try {
         return jwt.verify(token, env.REFRESH_SECRET) as {id: string}
     } catch (error) {
+        console.log(error)
         return null
     }
 };

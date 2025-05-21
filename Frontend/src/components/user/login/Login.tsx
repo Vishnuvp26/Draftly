@@ -44,7 +44,7 @@ const Login = () => {
             }));
             navigate('/auth/home')
         } catch (err: any) {
-            setError(err.message || "Login failed");
+            setError(err.error || "Login failed");
         } finally {
             setLoading(false);
         }
